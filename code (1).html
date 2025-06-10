@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GameBlocks - Plataforma de Jogos Criativos com IA & Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    /* Root Variables and Dark mode variables */
+    :root {
+      --color-bg: #ffffff;
+      --color-text-primary: #111827;
+      --color-text-secondary: #6b7280;
+      --color-accent: #000000;
+      --color-accent-hover: #272727;
+      --color-card-bg: #f9f9f9;
+      --color-shadow: rgba(0, 0, 0, 0.07);
+      --font-primary: 'Poppins', sans-serif;
+      --font-secondary: 'Inter', sans-serif;
+      --border-radius: 0.75rem;
+      --max-width: 1200px;
+      --spacing-vertical: 5rem;
+      --transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --chat-bg: #f3f4f6;
+      --chat-user-bg: #22c55e;
+      --chat-user-color: white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-bg: #121212;
+        --color-text-primary: #e0e0e0;
+        --color-text-secondary: #9ca3af;
+        --color-accent: #22d3ee;
+        --color-accent-hover: #06b6d4;
+        --color-card-bg: #1e1e1e;
+        --color-shadow: rgba(0, 0, 0, 0.9);
+        --chat-bg: #252525;
+        --chat-user-bg: #14b8a6;
+        --chat-user-color: white;
+      }
+    }
+
+    /* Dark mode class for manual toggle */
+    body.dark-mode {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+    }
+
+    /* Global reset & base */
+    *, *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-secondary);
+      font-size: 18px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      color: var(--color-accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+    }
+
+    a:hover,
+    a:focus {
+      color: var(--color-accent-hover);
+      outline: none;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1100;
+      background: var(--color-bg);
+      box-shadow: 0 2px 10px var(--color-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      font-family: var(--font-primary);
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 2.25rem;
+      letter-spacing: 0.1em;
+      user-select: none;
+      color: var(--color-text-primary);
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      align-items: center;
+    }
+
+    nav a {
+      position: relative;
+      padding: 0.25rem 0;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 0;
+      height: 3px;
+      background: var(--color-accent);
+      border-radius: var(--border-radius);
+      transition: width var(--transition-fast);
+    }
+
+    nav a:hover::after,
+    nav a:focus::after {
+      width: 100%;
+    }
+
+    button.nav-button {
+      background: none;
+      border: none;
+      color: var(--color-accent);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.25rem;
+      transition: color var(--transition-fast);
+    }
+
+    button.nav-button:hover,
+    button.nav-button:focus {
+      color: var(--color-accent-hover);
+      outline: none;
+    }
+
+    /* Main container */
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--spacing-vertical) 1rem 8rem;
+    }
+
+    /* Hero section */
+    .hero {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 6rem;
+      font-family: var(--font-primary);
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      color: var(--color-text-primary);
+      user-select: none;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-bottom: 3rem;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background-color: var(--color-accent);
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+      padding: 1rem 3rem;
+      border-radius: var(--border-radius);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+      user-select: none;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background-color: var(--color-accent-hover);
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    /* Features grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 6rem;
+    }
+
+    .feature-card {
+      background: var(--color-card-bg);
+      padding: 2rem 2.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 6px 18px var(--color-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+      user-select: none;
+    }
+
+    .feature-card:hover,
+    .feature-card:focus-within {
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+      transform: translateY(-6px);
+      outline: none;
+    }
+
+    .feature-icon {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 1.5rem;
+      stroke: var(--color-accent);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feature-title {
+      font-family: var(--font-primary);
+      font-weight: 700;
+      font-size: 1.375rem;
+      margin-bottom: 0.75rem;
+      color: var(--color-text-primary);
+    }
+
+    .feature-desc {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      line-height: 1.4;
+      user-select: text;
+    }
+
+    /* Games showcase grid */
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .game-card {
+      background: var(--color-card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 6px 20px var(--color-shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      user-select: none;
+      outline-offset: 3px;
+    }
+
+    .game-card:hover,
+    .game-card:focus {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+      outline: none;
+    }
+
+    .game-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .game-info {
+      padding: 1.5rem 1.75rem 2rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .game-title {
+      font-family: var(--font-primary);
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-primary);
+      line-height: 1.15;
+    }
+
+    .game-description {
+      flex-grow: 1;
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+      user-select: text;
+    }
+
+    .game-author {
+      font-size: 0.875rem;
+      color: #9ca3af;
+      font-weight: 600;
+      font-family: var(--font-secondary);
+      user-select: none;
+    }
+
+    /* Sections for community and get started (centered) */
+    section#community,
+    section#get-started {
+      margin-top: 6rem;
+      text-align: center;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    section#community h2,
+    section#get-started h2 {
+      font-family: var(--font-primary);
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--color-text-primary);
+      user-select: none;
+    }
+
+    section#community p,
+    section#get-started p {
+      color: var(--color-text-secondary);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+      user-select: text;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 4rem 1rem 3rem;
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+      user-select: none;
+      font-family: var(--font-secondary);
+      border-top: 1px solid #e5e7eb;
+    }
+
+    /* Chat Assistant */
+
+    #chat-toggle-button {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 56px;
+      height: 56px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1200;
+      user-select: none;
+      transition: background-color var(--transition-fast);
+    }
+
+    #chat-toggle-button:hover,
+    #chat-toggle-button:focus {
+      background: var(--color-accent-hover);
+      outline: none;
+    }
+
+    #chat-container {
+      position: fixed;
+      bottom: 80px;
+      right: 1.5rem;
+      width: 350px;
+      max-height: 500px;
+      background: var(--chat-bg);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border-radius: var(--border-radius);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: var(--font-secondary);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 1199;
+    }
+
+    #chat-container.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #chat-header {
+      background: var(--color-accent);
+      color: white;
+      padding: 1rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    #chat-close-btn:hover,
+    #chat-close-btn:focus {
+      color: #d1d5db;
+      outline: none;
+    }
+
+    #chat-messages {
+      flex-grow: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: var(--color-card-bg);
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-accent) transparent;
+    }
+
+    #chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #chat-messages::-webkit-scrollbar-thumb {
+      background-color: var(--color-accent);
+      border-radius: 3px;
+    }
+
+    .chat-message {
+      margin-bottom: 1rem;
+      max-width: 85%;
+      padding: 0.75rem 1rem;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      line-height: 1.3;
+      user-select: text;
+    }
+
+    .chat-message.bot {
+      background: var(--color-card-bg);
+      color: var(--color-text-primary);
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+      box-shadow: 0 1px 3px var(--color-shadow);
+    }
+
+    .chat-message.user {
+      background: var(--chat-user-bg);
+      color: var(--chat-user-color);
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+      box-shadow: 0 2px 6px rgb(17 24 39 / 0.5);
+    }
+
+    #chat-input-area {
+      display: flex;
+      border-top: 1px solid var(--color-shadow);
+      background: var(--color-bg);
+      padding: 0.5rem 1rem;
+    }
+
+    #chat-input {
+      flex-grow: 1;
+      border: 1px solid #d1d5db;
+      border-radius: var(--border-radius);
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-family: var(--font-secondary);
+      transition: border-color 0.2s ease;
+    }
+
+    #chat-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    #chat-send-btn {
+      background: var(--color-accent);
+      border: none;
+      color: white;
+      margin-left: 0.75rem;
+      padding: 0 1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+      user-select: none;
+    }
+
+    #chat-send-btn:hover,
+    #chat-send-btn:focus {
+      background: var(--color-accent-hover);
+      outline: none;
+    }
+
+    /* Login Modal */
+    #login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(17, 24, 39, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1300;
+      user-select: none;
+    }
+
+    #login-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #login-content {
+      background: var(--color-card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 30px var(--color-shadow);
+      max-width: 400px;
+      width: 90%;
+      padding: 2rem 2.5rem;
+      font-family: var(--font-secondary);
+      user-select: text;
+    }
+
+    #login-content h2 {
+      font-family: var(--font-primary);
+      font-weight: 700;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--color-text-primary);
+      user-select: none;
+    }
+
+    #login-content label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      user-select: none;
+    }
+
+    #login-content input[type="email"],
+    #login-content input[type="password"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      border-radius: var(--border-radius);
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+      font-family: var(--font-secondary);
+      user-select: text;
+    }
+
+    #login-content input[type="email"]:focus,
+    #login-content input[type="password"]:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    #login-content button {
+      background-color: var(--color-accent);
+      color: white;
+      font-weight: 700;
+      font-size: 1.15rem;
+      padding: 0.75rem 0;
+      border-radius: var(--border-radius);
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+      user-select: none;
+    }
+
+    #login-content button:hover,
+    #login-content button:focus {
+      background-color: var(--color-accent-hover);
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    #login-close-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      user-select: none;
+    }
+
+    #login-close-btn:hover,
+    #login-close-btn:focus {
+      color: var(--color-text-primary);
+      outline: none;
+    }
+
+    /* Theme toggle */
+    #theme-toggle {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      width: 56px;
+      height: 56px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+      color: white;
+      font-size: 26px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1200;
+      user-select: none;
+      transition: background-color var(--transition-fast);
+    }
+
+    #theme-toggle:hover,
+    #theme-toggle:focus {
+      background: var(--color-accent-hover);
+      outline: none;
+    }
+
+    /* Responsive typography */
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2.75rem;
+      }
+
+      .feature-title {
+        font-size: 1.125rem;
+      }
+
+      .game-title {
+        font-size: 1.125rem;
+      }
+
+      .game-card img {
+        height: 140px;
+      }
+
+      #chat-container {
+        bottom: 70px;
+        width: 300px;
+        max-height: 420px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo" tabindex="0" aria-label="GameBlocks logo">GameBlocks</div>
+    <nav role="navigation" aria-label="Menu principal">
+      <a href="#features" class="nav-link">Funcionalidades</a>
+      <a href="#games" class="nav-link">Jogos</a>
+      <a href="#community" class="nav-link">Comunidade</a>
+      <button class="nav-button" id="login-button" aria-haspopup="dialog" aria-controls="login-modal">Login</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" role="banner" aria-label="Introdução à plataforma de jogos criativos">
+      <h1>Crie e Explore Jogos Incríveis em 3D</h1>
+      <p>GameBlocks é a plataforma perfeita para você desenvolver jogos imersivos, sociais e divertidos — tudo sem sair do navegador.</p>
+      <button class="btn-primary" aria-label="Comece a criar seus jogos agora">Comece Agora</button>
+    </section>
+
+    <section class="features" id="features" aria-label="Lista de funcionalidades da plataforma">
+      <article class="feature-card" tabindex="0" aria-describedby="feature1-desc">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
+          focusable="false"><path d="M12 2L15 8l6 1-4.5 4.4 1 6L12 17l-5.5 3 1-6L3 9l6-1 3-7z" /></svg>
+        <h3 class="feature-title">Editor 3D Avançado</h3>
+        <p class="feature-desc" id="feature1-desc">
+          Ferramentas poderosas para construir mundos 3D detalhados com facilidade e recursos sociais integrados.
+        </p>
+      </article>
+
+      <article class="feature-card" tabindex="0" aria-describedby="feature2-desc">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
+          focusable="false"><circle cx="12" cy="12" r="10" /><path d="M8 14s1-2 4-2 4 2 4 2" /></svg>
+        <h3 class="feature-title">Comunidade Vibrante</h3>
+        <p class="feature-desc" id="feature2-desc">
+          Conecte-se com criadores e jogadores ao redor do mundo, compartilhe seus jogos e participe de eventos.
+        </p>
+      </article>
+
+      <article class="feature-card" tabindex="0" aria-describedby="feature3-desc">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
+          focusable="false"><path d="M4 4h16v16H4z" /></svg>
+        <h3 class="feature-title">Plataforma Sem Instalação</h3>
+        <p class="feature-desc" id="feature3-desc">
+          Jogue e crie diretamente do navegador, sem downloads ou configurações complicadas.
+        </p>
+      </article>
+
+      <article class="feature-card" tabindex="0" aria-describedby="feature4-desc">
+        <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
+          focusable="false"><path d="M12 2v20M2 12h20" /></svg>
+        <h3 class="feature-title">Integração Multiplataforma</h3>
+        <p class="feature-desc" id="feature4-desc">
+          Compatível com PC, tablets e dispositivos móveis para alcançar todos os seus amigos onde estiverem.
+        </p>
+      </article>
+    </section>
+
+    <section class="games" id="games" aria-label="Galeria de jogos criados na plataforma">
+      <article class="game-card" tabindex="0" aria-describedby="game1-desc">
+        <img src="https://source.unsplash.com/640x360/?game,virtual" alt="Jogo: Cidade Futurista em 3D" loading="lazy" />
+        <div class="game-info">
+          <h4 class="game-title">Cidade Futurista</h4>
+          <p class="game-description" id="game1-desc">
+            Explore um mundo futurista repleto de desafios, veículos voadores e aventuras urbanas para jogadores de todos os níveis.
+          </p>
+          <div class="game-author">Por: DevLuas</div>
+        </div>
+      </article>
+
+      <article class="game-card" tabindex="0" aria-describedby="game2-desc">
+        <img src="https://source.unsplash.com/640x360/?adventure,game" alt="Jogo: Aventura na Ilha Perdida" loading="lazy" />
+        <div class="game-info">
+          <h4 class="game-title">Aventura na Ilha Perdida</h4>
+          <p class="game-description" id="game2-desc">
+            Um jogo de exploração e sobrevivência onde você precisa desvendar mistérios e construir sua própria base.
+          </p>
+          <div class="game-author">Por: IlhaGamesBR</div>
+        </div>
+      </article>
+
+      <article class="game-card" tabindex="0" aria-describedby="game3-desc">
+        <img src="https://source.unsplash.com/640x360/?multiplayer,game" alt="Jogo: Batalha de Blocos Multijogador" loading="lazy" />
+        <div class="game-info">
+          <h4 class="game-title">Batalha de Blocos</h4>
+          <p class="game-description" id="game3-desc">
+            Encare outros jogadores em arenas dinâmicas, crie estratégias e torne-se o campeão dos blocos!
+          </p>
+          <div class="game-author">Por: BlocoPower</div>
+        </div>
+      </article>
+
+      <article class="game-card" tabindex="0" aria-describedby="game4-desc">
+        <img src="https://source.unsplash.com/640x360/?fantasy,game" alt="Jogo: Reino Mágico dos Blocos" loading="lazy" />
+        <div class="game-info">
+          <h4 class="game-title">Reino Mágico dos Blocos</h4>
+          <p class="game-description" id="game4-desc">
+            Um RPG incrível com magia, batalha e construção de reinos fantásticos em um universo de blocos.
+          </p>
+          <div class="game-author">Por: MysticCraft</div>
+        </div>
+      </article>
+    </section>
+
+    <section id="community">
+      <h2>Junte-se à Comunidade</h2>
+      <p>
+        Participe de fóruns, eventos e colabore com milhares de criadores apaixonados. Faça parte do futuro dos jogos.
+      </p>
+      <button class="btn-primary" aria-label="Entrar na comunidade de criadores">Entrar na Comunidade</button>
+    </section>
+
+    <section id="get-started">
+      <h2>Comece Seu Projeto Agora</h2>
+      <p>
+        Crie sua conta, escolha um template e dê vida às suas ideias com facilidade — tudo na nuvem, sem complicações.
+      </p>
+      <button class="btn-primary" aria-label="Criar conta e começar a criar jogos">Criar Conta Gratuita</button>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2024 GameBlocks. Todos os direitos reservados.
+  </footer>
+
+  <!-- Chat GPT Assistant -->
+  <button id="chat-toggle-button" aria-label="Abrir ou fechar chat IA">💬</button>
+  <div id="chat-container" role="region" aria-live="polite" aria-label="Chat IA Assistente">
+    <div id="chat-header">
+      Assistente IA
+      <button id="chat-close-btn" aria-label="Fechar chat IA">&times;</button>
+    </div>
+    <div id="chat-messages" role="log" aria-relevant="additions"></div>
+    <form id="chat-form" aria-label="Enviar mensagem ao assistente IA">
+      <input type="text" id="chat-input" aria-label="Mensagem da IA" placeholder="Pergunte algo..." autocomplete="off" required />
+      <button type="submit" id="chat-send-btn" aria-label="Enviar mensagem">Enviar</button>
+    </form>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title" tabindex="-1">
+    <div id="login-content">
+      <button id="login-close-btn" aria-label="Fechar formulário de login">&times;</button>
+      <h2 id="login-title">Entrar na GameBlocks</h2>
+      <form id="login-form" novalidate>
+        <label for="email">Email</label>
+        <input type="email" id="email" autocomplete="email" required aria-required="true" />
+        <label for="password">Senha</label>
+        <input type="password" id="password" autocomplete="current-password" required aria-required="true" />
+        <button type="submit" aria-label="Enviar formulário de login">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Theme Toggle -->
+  <button id="theme-toggle" aria-label="Alternar tema claro e escuro">🌓</button>
+
+  <script>
+    // Theme toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+    // Load saved theme or system preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      if (body.classList.contains('dark-mode')) {
+        setTheme('light');
+      } else {
+        setTheme('dark');
+      }
+    });
+
+    // Chat Assistant
+    const chatToggleBtn = document.getElementById('chat-toggle-button');
+    const chatContainer = document.getElementById('chat-container');
+    const chatCloseBtn = document.getElementById('chat-close-btn');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+
+    chatToggleBtn.addEventListener('click', () => {
+      chatContainer.classList.toggle('active');
+      if (chatContainer.classList.contains('active')) {
+        chatInput.focus();
+      }
+    });
+    chatCloseBtn.addEventListener('click', () => {
+      chatContainer.classList.remove('active');
+    });
+
+    function appendMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('chat-message', sender);
+      msgDiv.textContent = text;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Mock AI response
+    function aiResponse(input) {
+      // Simple keyword-based responses
+      input = input.toLowerCase();
+      if (input.includes('jogo') || input.includes('game')) {
+        return "Você pode explorar e criar diversos jogos incríveis aqui! Que tipo de jogo gostaria de criar?";
+      } else if (input.includes('login')) {
+        return "Clique no botão de Login no topo para acessar sua conta ou criar uma nova.";
+      } else if (input.includes('ajuda') || input.includes('suporte')) {
+        return "Estou aqui para ajudar! Pergunte qualquer coisa sobre a plataforma GameBlocks.";
+      } else {
+        return "Desculpe, não entendi. Pode reformular sua pergunta?";
+      }
+    }
+
+    chatForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const userMessage = chatInput.value.trim();
+      if (!userMessage) return;
+      appendMessage(userMessage, 'user');
+      chatInput.value = '';
+      setTimeout(() => {
+        appendMessage(aiResponse(userMessage), 'bot');
+      }, 700);
+    });
+
+    // Login modal
+    const loginModal = document.getElementById('login-modal');
+    const loginButton = document.getElementById('login-button');
+    const loginCloseBtn = document.getElementById('login-close-btn');
+    const loginForm = document.getElementById('login-form');
+
+    loginButton.addEventListener('click', () => {
+      loginModal.classList.add('active');
+      loginModal.focus();
+    });
+
+    loginCloseBtn.addEventListener('click', () => {
+      loginModal.classList.remove('active');
+    });
+
+    loginModal.addEventListener('click', (event) => {
+      if (event.target === loginModal) {
+        loginModal.classList.remove('active');
+      }
+    });
+
+    // Simple client-side login mock validation
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const email = loginForm.email.value.trim();
+      const password = loginForm.password.value.trim();
+      if (!email || !password) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
+      alert(`Login simulado para: ${email}`);
+      loginModal.classList.remove('active');
+      loginForm.reset();
+    });
+
+    // Accessibility: Trap focus within login modal when open
+    loginModal.addEventListener('keydown', e => {
+      if (!loginModal.classList.contains('active')) return;
+      const focusableElements = loginModal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex="0"]');
+      const firstEl = focusableElements[0];
+      const lastEl = focusableElements[focusableElements.length - 1];
+      if (e.key === 'Tab') {
+        if (e.shiftKey) { // shift + tab
+          if (document.activeElement === firstEl) {
+            lastEl.focus();
+            e.preventDefault();
+          }
+        } else { // tab
+          if (document.activeElement === lastEl) {
+            firstEl.focus();
+            e.preventDefault();
+          }
+        }
+      }
+      if (e.key === 'Escape') {
+        loginModal.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+
+</html>
+
+
